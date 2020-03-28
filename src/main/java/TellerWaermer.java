@@ -179,4 +179,32 @@ public class TellerWaermer {
     }
 
 
+    /**
+     * Aschalten des Tellerwärmers
+     * Erforderlicher Zustand: Eingeschalten UND Tellerwärmer ist leer
+     * Neuer Zustand: EMPTY --> TURENDOFF
+     * @return Erfolgs-, oder Fehlermeldung
+     */
+    public TellerWaermerResponseCode turnOff() {
+        if(isTurnedOn() && isEmpty()){
+            setState(TellerWarmerZustand.TURNEDOFF);
+            return TellerWaermerResponseCode.TURNOFF_SUCCESS;
+        }else{
+            return TellerWaermerResponseCode.TURNOFF_FAILURE;
+        }
+    }
+
+    /**
+     * Nachschauen ob ein Teller im tellerwärmer liegt
+     * Erforderlicher Zustand: Nicht Leer und eingeschalten
+     * Neuer Zustand: Keine Zustandsänderung
+     * @return Erfolgs-, oder Fehlermeldung
+     */
+    public TellerWaermerResponseCode peek() {
+        if(!isEmpty() && isTurnedOn()){
+            return TellerWaermerResponseCode.PEEK_SUCCESS;
+        }else{
+            return TellerWaermerResponseCode.PEEK_FAILURE;
+        }
+    }
 }

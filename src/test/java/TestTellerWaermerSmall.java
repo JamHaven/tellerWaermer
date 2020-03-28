@@ -21,7 +21,7 @@ public class TestTellerWaermerSmall {
      * Erwartet: Gerät lässt sich Einschalten
      */
     @Test
-    void testEinschalten_istAus() {
+    void testEinschalten_isOff() {
         TellerWaermerResponseCode response = tellerWaermer.turnOn();
         assertTrue(tellerWaermer.isTurnedOn());
         assertEquals(TellerWaermerResponseCode.TURNON_SUCCESS, response);
@@ -33,46 +33,126 @@ public class TestTellerWaermerSmall {
      * Erwartet: Fehler, dass das Gerät nicht eingeschalten werden kann
      */
     @Test
-    void testEinschalten_istAn() {
+    void testEinschalten_isOn() {
         tellerWaermer.turnOn();
         TellerWaermerResponseCode response = tellerWaermer.turnOn();
         assertTrue(tellerWaermer.isTurnedOn());
         assertEquals(TellerWaermerResponseCode.TURNON_FAILURE, response);
     }
 
+    /**
+     * Testtitel: Teller anschauen, obwohl der Tellerwärmer leer ist
+     * Ausgangszustand: Gerät ist im Zustand EMPTY
+     * Erwartet: Fehlermeldung
+     */
     @Test
-    void testPeek_Leer() {
-        System.out.println("stup");
+    void testPeek_Empty() {
+        tellerWaermer.turnOn();
+        TellerWaermerResponseCode response =  tellerWaermer.peek();
+        assertEquals(TellerWaermerResponseCode.PEEK_FAILURE, response);
     }
 
+
+    /**
+     * Testtitel: Teller anschauen wenn der Tellerwärmer voll ist
+     * Ausgangszustand: Gerät ist im Zustand FULL
+     * Erwartet: Erfolgsmeldung
+     */
     @Test
-    void testPeek_Voll() {
-        System.out.println("stup");
+    void testPeek_Full() {
+        int pushCount = 15;
+        tellerWaermer.turnOn();
+        tellerWaermer.pushTeller(pushCount); // Teller hinzufügen
+        assertTrue(tellerWaermer.isFull());
+        TellerWaermerResponseCode response =  tellerWaermer.peek();
+        assertEquals(TellerWaermerResponseCode.PEEK_SUCCESS, response);
     }
 
+    /**
+     * Testtitel: Teller anschauen wenn der Tellerwärmer gefüllt ist
+     * Ausgangszustand: Gerät ist im Zustand PARTIAL
+     * Erwartet: Erfolgsmeldung
+     */
     @Test
-    void testPeek_gefuellt() {
-        System.out.println("stup");
+    void testPeek_Partial() {
+        int pushCount = 4;
+        tellerWaermer.turnOn();
+        tellerWaermer.pushTeller(pushCount); // Teller hinzufügen
+        assertTrue(tellerWaermer.isPartial());
+        TellerWaermerResponseCode response =  tellerWaermer.peek();
+        assertEquals(TellerWaermerResponseCode.PEEK_SUCCESS, response);
     }
 
+    /**
+     * Testtitel: Teller anschauen, obwohl der Tellerwärmer ausgeschalten ist
+     * Ausgangszustand: Gerät ist im Zustand TURNEDOFF
+     * Erwartet: Fehlermeldung
+     */
+    @Test
+    void testPeek_TurnedOff() {
+        TellerWaermerResponseCode response =  tellerWaermer.peek();
+        assertEquals(TellerWaermerResponseCode.PEEK_FAILURE, response);
+    }
+
+    /**
+     * Testtitel: Tellerwärmer ausschalten wenn er leer ist
+     * Ausgangszustand: Gerät ist im Zustand EMPTY
+     * Erwartet:Erfolgsmeldung und Status wechselt zu TURNEDOFF
+     */
     @Test
     void testAusschalten_istAnUndLeer() {
-        System.out.println("stup");
+        tellerWaermer.turnOn();
+        TellerWaermerResponseCode response = tellerWaermer.turnOff();
+        assertTrue(tellerWaermer.isTurnedOff());
+        assertEquals(TellerWaermerResponseCode.TURNOFF_SUCCESS, response);
     }
 
+    /**
+     * Testtitel: Tellerwärmer ausschalten obwohl er gefüllt ist
+     * Ausgangszustand: Gerät ist im Zustand PARTIAL
+     * Erwartet:Fehlermeldung und Status bleibt PARTIAL
+     */
     @Test
     void testAusschalten_istAnUndGefuellt() {
-        System.out.println("stup");
+        //Einschalten und Zustand auf PARTIAL ändern
+        int pushCount = 1;
+        tellerWaermer.turnOn();
+        tellerWaermer.pushTeller(pushCount); // Teller hinzufügen
+        assertTrue(tellerWaermer.isPartial());
+
+        TellerWaermerResponseCode response = tellerWaermer.turnOff();
+        assertFalse(tellerWaermer.isTurnedOff());
+        assertEquals(TellerWaermerResponseCode.TURNOFF_FAILURE, response);
     }
 
+    /**
+     * Testtitel: Tellerwärmer ausschalten obwohl er voll ist
+     * Ausgangszustand: Gerät ist im Zustand FULL
+     * Erwartet:Fehlermeldung und Status bleibt FULL
+     */
     @Test
     void testAusschalten_istAnUndVoll() {
-        System.out.println("stup");
+        //Einschalten und Zustand auf PARTIAL ändern
+        int pushCount = 15;
+        tellerWaermer.turnOn();
+        tellerWaermer.pushTeller(pushCount); // Teller hinzufügen
+        assertTrue(tellerWaermer.isFull());
+
+        TellerWaermerResponseCode response = tellerWaermer.turnOff();
+        assertFalse(tellerWaermer.isTurnedOff());
+        assertEquals(TellerWaermerResponseCode.TURNOFF_FAILURE, response);
     }
 
+    /**
+     * Testtitel: Tellerwärmer ausschalten obwohl er schon aus ist
+     * Ausgangszustand: Gerät ist im Zustand TURNEDOFF
+     * Erwartet:Fehlermeldung und Status bleibt TURNEDOFF
+     */
     @Test
     void testAusschalten_istAus() {
-        System.out.println("stup");
+        TellerWaermerResponseCode response = tellerWaermer.turnOff();
+        assertTrue(tellerWaermer.isTurnedOff());
+        assertEquals(TellerWaermerResponseCode.TURNOFF_FAILURE, response);
     }
 
     /**
