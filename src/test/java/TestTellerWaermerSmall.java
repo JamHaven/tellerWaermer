@@ -179,6 +179,20 @@ public class TestTellerWaermerSmall {
      * Erwartet: Fehlermeldung, Telleranzahl wurde nicht reduziert und Status bleibt auf EMPTY
      */
     @Test
+    void testTellerNehmen_andIsTurnedOff() {
+        int pullCount = 3;
+        TellerWaermerResponseCode response = tellerWaermer.pullTeller(pullCount);
+        assertTrue(tellerWaermer.isTurnedOff());
+        assertEquals(TellerWaermerResponseCode.PULL_FAILURE_TURNEDOFF,response);
+        assertEquals(0,tellerWaermer.getPlatzierteTellerAnzahl());
+    }
+
+    /**
+     * Testtitel: Teller entnehmen von einem leeren Tellerwärmer
+     * Ausgangszustand: Gerät eingeschaltet und Zustand EMPTY
+     * Erwartet: Fehlermeldung, Telleranzahl wurde nicht reduziert und Status bleibt auf EMPTY
+     */
+    @Test
     void testTellerNehmen_istLeer() {
         int pullCount = 3;
         tellerWaermer.turnOn();
