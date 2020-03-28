@@ -7,6 +7,7 @@ enum TellerWaermerResponseCode {
     PEEK_FAILURE(504, "'Du starrst verzweifelt in den leeren Tellerwärmer. Du fühlst nichts.' Keine Teller zum anschauen vorhanden."),
     STATESWITCH_SUCCESS(505, "Der Zustandswechsel ist fehlgeschlagen. Befindet sich der Tellerwärmer im richtigen Zustand?"),
     PUSH_FAILURE_TURNEDOFF(506, "Teller konnte nicht eingelegt werden. Der Tellerwaermer ist nicht eingeschalten."),
+    PULL_FAILURE_TURNEDOFF(507, "Teller konnte nicht entnommen werden. Der Tellerwaermer ist nicht eingeschalten."),
     TURNON_SUCCESS(200, "Das Geraet wurde erfolgreich eingeschalten."),
     TURNOFF_SUCCESS(201, "Das Geraet wurde erfolgreich ausgeschalten."),
     PUSH_SUCCESS(202,"Es wurde erfolgreich ein Teller zum Stapel hinzugefuegt."),

@@ -75,14 +75,66 @@ public class TestTellerWaermerSmall {
         System.out.println("stup");
     }
 
+    /**
+     * Testtitel: Teller entnehmen von einem teilweise befüllten Tellerwärmer
+     * Ausgangszustand: Gerät eingeschaltet und Zustand PARTIAL
+     * Erwartet: Erfolgsmeldung und Telleranzahl wurde reduziert, und Status ändert sich auf EMPTY
+     */
     @Test
-    void testTellerNehmen_hatTeller() {
-        System.out.println("stup");
+    void testTellerNehmen_hatTeller_toEmpty() {
+       int pullCount = 3;
+       tellerWaermer.turnOn();
+       tellerWaermer.pushTeller(pullCount);
+       assertTrue(tellerWaermer.isPartial());
+       int tellerCountBeforePull = tellerWaermer.getPlatzierteTellerAnzahl();
+       TellerWaermerResponseCode response = tellerWaermer.pullTeller(pullCount);
+       assertTrue(tellerWaermer.isEmpty());
+       assertEquals(TellerWaermerResponseCode.PULL_SUCCESS,response);
+       assertEquals(tellerCountBeforePull-pullCount,tellerWaermer.getPlatzierteTellerAnzahl());
     }
 
+    /**
+     * Testtitel: Teller entnehmen von einem leeren Tellerwärmer
+     * Ausgangszustand: Gerät eingeschaltet und Zustand EMPTY
+     * Erwartet: Fehlermeldung, Telleranzahl wurde nicht reduziert und Status bleibt auf EMPTY
+     */
     @Test
     void testTellerNehmen_istLeer() {
-        System.out.println("stup");
+        int pullCount = 3;
+        tellerWaermer.turnOn();
+        TellerWaermerResponseCode response = tellerWaermer.pullTeller(pullCount);
+        assertTrue(tellerWaermer.isEmpty());
+        assertEquals(TellerWaermerResponseCode.PULL_FAILURE,response);
+        assertEquals(0,tellerWaermer.getPlatzierteTellerAnzahl());
+    }
+
+    /**
+     * Testtitel: Teller von vollen Stapel entehmen bis leer
+     * Ausgangszustand: Gerät eingeschaltet und Zustand FULL
+     * Erwartet: Erfolgsmeldung Zustandswechsel auf PARTIAL und dann auf EMPTY, Anzahl sinkt auf 0
+     */
+    @Test
+    void testTellerNehmen_fromFullToEmptyInTwoSteps() {
+        int pullCount = 15;
+        tellerWaermer.turnOn();
+        tellerWaermer.pushTeller(pullCount); // Teller hinzufügen
+        assertTrue(tellerWaermer.isFull());
+
+        pullCount = 1;
+        int tellerCountBeforePull = tellerWaermer.getPlatzierteTellerAnzahl();
+        TellerWaermerResponseCode response = tellerWaermer.pullTeller(pullCount); //Ein Teller entnehmen --> Status auf Partial
+        assertTrue(tellerWaermer.isPartial());
+        assertEquals(TellerWaermerResponseCode.PULL_SUCCESS,response);
+        assertEquals(tellerCountBeforePull-pullCount,tellerWaermer.getPlatzierteTellerAnzahl());
+
+        pullCount = 14;
+        tellerCountBeforePull = tellerWaermer.getPlatzierteTellerAnzahl();
+        response = tellerWaermer.pullTeller(pullCount); //Restliche Teller entnehmen
+        assertTrue(tellerWaermer.isEmpty());
+        assertEquals(TellerWaermerResponseCode.PULL_SUCCESS,response);
+        assertEquals(tellerCountBeforePull-pullCount,tellerWaermer.getPlatzierteTellerAnzahl());
+
+
     }
 
     /**
