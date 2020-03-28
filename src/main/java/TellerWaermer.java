@@ -1,3 +1,5 @@
+import java.sql.SQLOutput;
+
 public class TellerWaermer {
 
     private int platzierteTellerAnzahl;
@@ -111,6 +113,7 @@ public class TellerWaermer {
             //Falls PUSH nicht erfolgreich war --> Fehler
             TellerWaermerResponseCode response = pushSingleTeller();
             if(!response.equals(TellerWaermerResponseCode.PUSH_SUCCESS)){
+                System.out.println("Es wurden nur " + (tellerLeger - 1) + " von den " + pushCount + " Tellern auf dem Stapel gelegt!");
                 return response;
             }
         }
@@ -146,6 +149,7 @@ public class TellerWaermer {
             //Falls PULL nicht erfolgreich war --> Fehler
             TellerWaermerResponseCode response = pullSingleTeller();
             if(!response.equals(TellerWaermerResponseCode.PULL_SUCCESS)){
+                System.out.println("Es wurden nur " + (tellerLeger -1) + " von den " + pullCount + " gefordertern Tellern etnommen!");
                 return response;
             }
         }
