@@ -25,14 +25,6 @@ enum TellerWaermerResponseCode {
         this.description = description;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public int getCode() {
-        return code;
-    }
-
     @Override
     public String toString() {
         return code + ": " + description;
